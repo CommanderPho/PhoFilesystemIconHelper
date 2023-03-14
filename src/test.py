@@ -49,6 +49,34 @@ class IconChanger(QWidget):
         icon = QFileDialog.getOpenFileName(self, 'Select Icon', '', 'Icon Files (*.ico)')
         self.icon_text.setText(icon[0])
 
+    # def apply_icon(self):
+    # 	""" results in `I get "module 'win32api' has no attribute 'SHChangeNotify'` """
+    #     folder_path = self.folder_text.text()
+    #     icon_path = self.icon_text.text()
+    #     if not os.path.exists(folder_path):
+    #         QMessageBox.warning(self, 'Error', 'The selected folder does not exist.')
+    #     elif not os.path.exists(icon_path):
+    #         QMessageBox.warning(self, 'Error', 'The selected icon does not exist.')
+    #     else:
+    #         try:
+    #             with open(icon_path, 'rb') as icon_file:
+    #                 icon_data = icon_file.read()
+    #             if sys.platform == 'win32':
+    #                 # On Windows, use the win32api module to set the folder icon
+    #                 import win32api, win32con
+    #                 win32api.SetFileAttributes(folder_path, win32con.FILE_ATTRIBUTE_NORMAL)
+    #                 win32api.SetFileAttributes(icon_path, win32con.FILE_ATTRIBUTE_NORMAL)
+    #                 win32api.SHChangeNotify(win32con.SHCNE_ASSOCCHANGED, win32con.SHCNF_IDLIST, None, None)
+    #                 win32api.SHSetLocalizedName(folder_path, icon_path)
+    #             else:
+    #                 # On other platforms, set the folder icon using xdg-icon-resource
+    #                 icon_name = os.path.basename(icon_path).replace('.ico', '')
+    #                 os.system(f'xdg-icon-resource install --context emblems --size 64 {icon_path} {icon_name}')
+    #                 os.system(f'gio set "{folder_path}" metadata::emblems {icon_name}')
+    #             QMessageBox.information(self, 'Success', 'The folder icon was successfully changed.')
+    #         except Exception as e:
+    #             QMessageBox.warning(self, 'Error', f'An error occurred: {str(e)}')
+
     def apply_icon(self):
         folder_path = self.folder_text.text()
         icon_path = self.icon_text.text()
@@ -57,24 +85,29 @@ class IconChanger(QWidget):
         elif not os.path.exists(icon_path):
             QMessageBox.warning(self, 'Error', 'The selected icon does not exist.')
         else:
+            print(f'folder_path: {folder_path}')
+            print(f'icon_path: {icon_path}')
+
             try:
                 with open(icon_path, 'rb') as icon_file:
                     icon_data = icon_file.read()
                 if sys.platform == 'win32':
-                    # On Windows, use the win32api module to set the folder icon
-                    import win32api, win32con
+                    # On Windows, use the win32api and win32gui modules to set the folder icon
+                    import win32api, win32con, win32gui
                     win32api.SetFileAttributes(folder_path, win32con.FILE_ATTRIBUTE_NORMAL)
                     win32api.SetFileAttributes(icon_path, win32con.FILE_ATTRIBUTE_NORMAL)
-                    win32api.SHChangeNotify(win32con.SHCNE_ASSOCCHANGED, win32con.SHCNF_IDLIST, None, None)
-                    win32api.SHSetLocalizedName(folder_path, icon_path)
+                    win32gui.SHChangeNotify(win32con.SHCNE_ASSOCCHANGED, win32con.SHCNF_IDLIST, None, None)
+                    win32gui.SHSetLocalizedName(folder_path, icon_path)
                 else:
                     # On other platforms, set the folder icon using xdg-icon-resource
                     icon_name = os.path.basename(icon_path).replace('.ico', '')
                     os.system(f'xdg-icon-resource install --context emblems --size 64 {icon_path} {icon_name}')
-                    os.system(f'gio set "{folder_path}" metadata::emblems {icon_name}')
-                QMessageBox.information(self, 'Success', 'The folder icon was successfully changed.')
+                    os.system(f'gio set "{folder_path}" metadata::custom-icon "emblems/{icon_name}"')
+                QMessageBox.information(self, 'Success', 'Icon changed successfully!')
             except Exception as e:
-                QMessageBox.warning(self, 'Error', f'An error occurred: {str(e)}')
+                QMessageBox.warning(self, 'Error', f'Failed to change icon: {e}')
+
+    
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
