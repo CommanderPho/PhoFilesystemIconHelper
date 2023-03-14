@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "phofilesystemiconhelper"
+version = "0.1.0"
+description = "Helps set and manage custom filesystem (file/folder) icons on Windows"
+authors = ["Pho Hale <PhoHale@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+PyQt6 = "^6.4.2"
+wheel = "^0.40.0"
+
+[tool.poetry.group.dev.dependencies]
+setuptools = "^67.6.0"
+dvc = "^2.48.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
