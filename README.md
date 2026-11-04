@@ -3,7 +3,10 @@ A tool to enable changing folder/file icons on Windows
 
 # Requires
 https://www.imagemagick.org/script/download.php#windows
-
+### Install via:
+```ps1
+winget install ImageMagick.Q16-HDRI
+```
 
 ## Related Projects/Repos
 https://github.com/customIcon/customIcons
