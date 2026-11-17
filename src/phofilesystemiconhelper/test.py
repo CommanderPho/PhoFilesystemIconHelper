@@ -46,7 +46,9 @@ class IconChanger(QWidget):
         self.folder_text.setText(folder)
 
     def select_icon(self):
-        icon = QFileDialog.getOpenFileName(self, 'Select Icon', '', 'Icon Files (*.ico)')
+        icon = QFileDialog.getOpenFileName(
+            self, 'Select Icon', '', 'Icon Files (*.ico *.icns)'
+        )
         self.icon_text.setText(icon[0])
 
     # def apply_icon(self):
@@ -89,6 +91,21 @@ class IconChanger(QWidget):
             print(f'icon_path: {icon_path}')
 
             try:
+                if icon_path.lower().endswith('.icns'):
+                    from phofilesystemiconhelper.icns_to_ico import (
+                        IcnsConversionError,
+                        icns_to_ico,
+                    )
+                    try:
+                        icon_path = str(icns_to_ico(icon_path))
+                        self.icon_text.setText(icon_path)
+                        print(f'converted_icon_path: {icon_path}')
+                    except IcnsConversionError as e:
+                        QMessageBox.warning(
+                            self, 'Error', f'Failed to convert .icns to .ico: {e}'
+                        )
+                        return
+
                 with open(icon_path, 'rb') as icon_file:
                     icon_data = icon_file.read()
                 if sys.platform == 'win32':

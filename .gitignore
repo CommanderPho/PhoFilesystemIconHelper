@@ -1,0 +1,5 @@
+EXTERNAL/EXTRACTED_CUSTOM_ICONS/
+data/icon_index.sqlite
+data/icon_cache/
+**/__pycache__/
+desktop.ini

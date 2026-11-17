@@ -18,6 +18,9 @@ dev = [
     "setuptools>=67.6.0",
 ]
 
+[project.scripts]
+phofilesystemiconhelper = "phofilesystemiconhelper.__main__:main"
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

@@ -8,6 +8,65 @@ https://www.imagemagick.org/script/download.php#windows
 winget install ImageMagick.Q16-HDRI
 ```
 
+ImageMagick is only needed for the vendored **magico** PNG→folder-icon pipeline. ICNS→ICO conversion uses **Pillow** (already a project dependency) and works on Windows without ImageMagick or macOS `iconutil`.
+
+## Convert ICNS → ICO (Windows)
+
+Convert a single macOS `.icns` to a multi-size Windows `.ico`:
+
+```ps1
+uv run python -m phofilesystemiconhelper icns-to-ico path\to\icon.icns
+uv run python -m phofilesystemiconhelper icns-to-ico path\to\icon.icns -o path\to\out.ico
+```
+
+Batch-convert a directory:
+
+```ps1
+uv run python -m phofilesystemiconhelper icns-to-ico path\to\icns_dir -o path\to\out_dir
+uv run python -m phofilesystemiconhelper icns-to-ico path\to\icns_dir -o path\to\out_dir --recursive
+```
+
+Or from Python:
+
+```python
+from phofilesystemiconhelper import icns_to_ico
+
+icns_to_ico(r"path\to\icon.icns")  # writes icon.ico beside the source
+```
+
+The GUI icon picker also accepts `.icns` and converts beside the source before apply.
+
+## Disk icons: index → match → apply
+
+Build a SQLite database of every `.icns` / `.ico` under a folder (recursive), match them to local HDD/SSD hardware, and apply the best icon as the **OS volume icon** (Explorer drive letter / Finder volume).
+
+Recommended library root (avoid also indexing the duplicate `EnvironmentCustomization` mirror unless you intend to):
+
+`EXTERNAL/EXTRACTED_CUSTOM_ICONS/Icons`
+
+```ps1
+# 1) Index icons
+uv run python -m phofilesystemiconhelper icons index "EXTERNAL/EXTRACTED_CUSTOM_ICONS/Icons"
+
+# 2) List hardware disks
+uv run python -m phofilesystemiconhelper disks list
+
+# 3) Show best icon per disk
+uv run python -m phofilesystemiconhelper disks match
+
+# 4) Dry-run apply (default)
+uv run python -m phofilesystemiconhelper disks apply
+
+# 5) Actually apply (Windows: must run elevated for HKLM DriveIcons)
+uv run python -m phofilesystemiconhelper disks apply --yes
+```
+
+Notes:
+- DB defaults to `data/icon_index.sqlite`; conversions for the wrong platform format go to `data/icon_cache/`.
+- Windows fixed drives use `HKLM\...\Explorer\DriveIcons\<Letter>\DefaultIcon` (admin required). Removable/external disks also get `autorun.inf` + `.ico` on the volume root.
+- macOS writes `{mount}/.VolumeIcon.icns` and sets the custom-icon flag when possible. System volume is skipped unless `--include-system`.
+- Matching is fuzzy over filename tokens (vendor / model / media / capacity / bus), preferring `New Drive Icons` and `DriveIcons` packs.
+
 ## Related Projects/Repos
 https://github.com/customIcon/customIcons
 https://github.com/sameera-madushan/PosterPy
@@ -50,3 +109,11 @@ uv run python extract_disk_texture.py -- --input "E:/Dropbox (Personal)/personal
 
 
     
+## Main RUn
+```ps1
+
+uv run python -m phofilesystemiconhelper icons index "EXTERNAL/EXTRACTED_CUSTOM_ICONS/Icons"
+uv run python -m phofilesystemiconhelper disks list
+uv run python -m phofilesystemiconhelper disks match
+
+```
