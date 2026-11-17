@@ -40,3 +40,13 @@ https://stackoverflow.com/questions/41392818/change-directory-folder-icon-using-
 
 folder_path = "C:/Users/pho/repos/PhoFilesystemIconHelper/test/test_folder"
 icon_path = "C:/Users/pho/repos/PhoFilesystemIconHelper/data/icons/Colors.01.ico"
+
+
+## Extract Disk Icons
+
+uv run python extract_disk_texture.py -- --input "E:/Dropbox (Personal)/personalStore/records/Computer Storage Information/iCloud 2026-11-17/IMG_5858.png" --drive-type 3.5 --enhance --export-obj
+
+    H\ScreenRecordings\L\Backups
+
+
+    
