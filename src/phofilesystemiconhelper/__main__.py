@@ -99,6 +99,17 @@ def _build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Include the system/boot volume",
     )
+
+    gui = sub.add_parser(
+        "gui",
+        help="Open the Disk Icon Manager (Windows + macOS)",
+    )
+    gui.add_argument("--db", type=Path, default=DEFAULT_DB_PATH)
+    gui.add_argument(
+        "--include-system",
+        action="store_true",
+        help="Include the system/boot volume in the list",
+    )
     return parser
 
 
@@ -214,6 +225,15 @@ def _cmd_disks_match(args: argparse.Namespace) -> int:
     return 0
 
 
+def _cmd_gui(args: argparse.Namespace) -> int:
+    from phofilesystemiconhelper.gui.disk_icon_manager import run_disk_icon_manager
+
+    return run_disk_icon_manager(
+        db_path=args.db,
+        include_system=args.include_system,
+    )
+
+
 def _cmd_disks_apply(args: argparse.Namespace) -> int:
     if not Path(args.db).is_file():
         print(
@@ -280,6 +300,8 @@ def main(argv: list[str] | None = None) -> int:
             return _cmd_disks_match(args)
         if args.disks_command == "apply":
             return _cmd_disks_apply(args)
+    if args.command == "gui":
+        return _cmd_gui(args)
 
     parser.error(f"Unknown command: {args.command}")
     return 2

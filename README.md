@@ -59,7 +59,13 @@ uv run python -m phofilesystemiconhelper disks apply
 
 # 5) Actually apply (Windows: must run elevated for HKLM DriveIcons)
 uv run python -m phofilesystemiconhelper disks apply --yes
+
+# 6) Disk Icon Manager GUI (Windows + macOS)
+uv run python -m phofilesystemiconhelper gui
+uv run python -m phofilesystemiconhelper gui --db data/icon_index.sqlite --include-system
 ```
+
+The GUI lists each disk with its **current** volume icon, the **suggested** icon from the DB, and actions to apply the suggestion, choose/drag a custom `.ico`/`.icns`, or revert to the OS default. On Windows, use **Restart elevated** (or launch an admin shell) before Apply / Revert for fixed drives.
 
 Notes:
 - DB defaults to `data/icon_index.sqlite`; conversions for the wrong platform format go to `data/icon_cache/`.
